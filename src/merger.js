@@ -3,6 +3,7 @@
 const fs = require('fs');
 const nodePath = require('path');
 const md5Dir = require('md5-dir/promise');
+const mv = require('mv');
 const Constants = require('./util/Constants');
 const Manifest = require('./util/Manifest');
 const Util = require('./util/Util');
@@ -124,7 +125,8 @@ async function merge(paths, options) {
   }
 
   // Move assets
-  fs.renameSync(tempPath, options.outputPath);
+  // eslint-disable-next-line no-empty-function
+  mv(tempPath, options.outputPath, () => {});
 }
 
 module.exports = merge;
