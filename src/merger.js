@@ -17,6 +17,9 @@ async function merge(paths, options) {
   if (typeof options !== 'object' || options === null) {
     throw new TypeError(`options must be type of object, got '${typeof options}'.`);
   }
+  if (typeof options.outputPath !== 'string') {
+    throw new TypeError(`options.outputPath must be type of string, got '${typeof options.outputPath}'.`);
+  }
   if (!fs.existsSync(options.tempPath)) throw new Error(`ENOENT: tempPath does not exist`);
   if (!fs.statSync(options.tempPath).isDirectory()) throw new Error(`ENOTDIR: tempPath must be a directory`);
 
@@ -29,13 +32,6 @@ async function merge(paths, options) {
     path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
     info(`Tasking '${path}'`);
     if (!fs.existsSync(path)) throw new Error(`ENOENT: the path you provided does not exist, '${path}'`);
-    if (
-      typeof options.outputPath !== 'string' &&
-      paths[0] &&
-      nodePath.join(path, '..') !== nodePath.join(paths[0], '..')
-    ) {
-      throw new Error(`Cannot merge folders to an ambigious output directory. Please use 'options.outputPath'`);
-    }
     if (!fs.existsSync(nodePath.join(path, 'stream'))) {
       console.warn(`The resource '${nodePath.basename(path)}' doesn't have any streamed assets. Continuing...`);
       continue;
@@ -126,6 +122,9 @@ async function merge(paths, options) {
       }
     }
   }
+
+  // Move assets
+  fs.renameSync(tempPath, options.outputPath);
 }
 
 module.exports = merge;
