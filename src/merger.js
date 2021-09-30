@@ -75,6 +75,13 @@ async function merge(paths, options) {
     const dataFiles = [];
 
     for (const dataName in manifest.data_file) {
+      if (!Constants.DataFileNames[dataName]) {
+        process.emitWarning(
+          `The fivem merge library cannot merge the '${dataName}' data file. ` +
+            `You will have to do this manually for ${nodePath.basename(path)}.`,
+        );
+        continue;
+      }
       const dataPath = nodePath.join(path, manifest.data_file[dataName]);
       if (!fs.existsSync(dataPath)) continue;
       const dataTempPath = nodePath.join(tempPath, 'data', Constants.DataFileNames[dataName]);
