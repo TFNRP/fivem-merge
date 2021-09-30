@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const nodePath = require('path');
 const xml = require('fast-xml-parser');
 const lua = require('luaparse');
 const xmlFormatter = require('xml-formatter');
@@ -27,14 +28,14 @@ class Util extends null {
                   ) {
                     if (!object[item.expression.base.base.name]) object[item.expression.base.base.name] = {};
                     if (
-                      ["'", '"'].includes(item.expression.base.argument.raw.at(0)) &&
-                      ["'", '"'].includes(item.expression.base.argument.raw.at(-1))
+                      ["'", '"'].includes(Util.arrayAt(item.expression.base.argument.raw, 0)) &&
+                      ["'", '"'].includes(Util.arrayAt(item.expression.base.argument.raw, -1))
                     ) {
                       item.expression.base.argument.raw = item.expression.base.argument.raw.slice(1, -1);
                     }
                     if (
-                      ["'", '"'].includes(item.expression.argument.raw.at(0)) &&
-                      ["'", '"'].includes(item.expression.argument.raw.at(-1))
+                      ["'", '"'].includes(Util.arrayAt(item.expression.argument.raw, 0)) &&
+                      ["'", '"'].includes(Util.arrayAt(item.expression.argument.raw, -1))
                     ) {
                       item.expression.argument.raw = item.expression.argument.raw.slice(1, -1);
                     }
@@ -47,8 +48,8 @@ class Util extends null {
                   if (item.expression.argument.type === 'StringLiteral') {
                     if (!object[item.expression.base.name]) object[item.expression.base.name] = {};
                     if (
-                      ["'", '"'].includes(item.expression.argument.raw.at(0)) &&
-                      ["'", '"'].includes(item.expression.argument.raw.at(-1))
+                      ["'", '"'].includes(Util.arrayAt(item.expression.argument.raw, 0)) &&
+                      ["'", '"'].includes(Util.arrayAt(item.expression.argument.raw, -1))
                     ) {
                       item.expression.argument.raw = item.expression.argument.raw.slice(1, -1);
                     }
@@ -71,7 +72,10 @@ class Util extends null {
                   switch (field.type) {
                     case 'TableValue': {
                       if (field.value.type === 'StringLiteral') {
-                        if (["'", '"'].includes(field.value.raw.at(0)) && ["'", '"'].includes(field.value.raw.at(-1))) {
+                        if (
+                          ["'", '"'].includes(Util.arrayAt(field.value.raw, 0)) &&
+                          ["'", '"'].includes(Util.arrayAt(field.value.raw, -1))
+                        ) {
                           field.value.raw = field.value.raw.slice(1, -1);
                         }
 
@@ -154,6 +158,39 @@ class Util extends null {
       `${files.length > 0 ? `files {\n${files.map(file => `  '${file}'`).join(',\n')}\n}\n` : ''}` +
       `${data_files.length > 0 ? `${data_files.map(file => `data_file ${file}`).join('\n')}\n` : ''}`
     );
+  }
+
+  // Polyfill for Array.prototype.at
+  static arrayAt(array, n) {
+    n = Math.trunc(n) || 0;
+    if (n < 0) n += array.length;
+    if (n < 0 || n >= array.length) return undefined;
+    return array[n];
+  }
+
+  // Polyfill for fs.cpSync
+  static copyRecursive(source, destination) {
+    if (!fs.existsSync(source)) fs.mkdirSync(source);
+    if (!fs.existsSync(destination)) fs.mkdirSync(destination);
+    for (const ent of fs.readdirSync(source, { withFileTypes: true })) {
+      if (ent.isDirectory()) {
+        Util.copyRecursive(nodePath.join(source, ent.name), nodePath.join(destination, ent.name));
+      } else if (ent.isFile()) {
+        fs.copyFileSync(nodePath.join(source, ent.name), nodePath.join(destination, ent.name));
+      }
+    }
+  }
+
+  // Polyfill for fs.cpSync
+  static removeRecursive(source) {
+    for (const ent of fs.readdirSync(source, { withFileTypes: true })) {
+      if (ent.isDirectory()) {
+        Util.removeRecursive(nodePath.join(source, ent.name));
+      } else if (ent.isFile()) {
+        fs.unlinkSync(nodePath.join(source, ent.name));
+      }
+    }
+    fs.rmdirSync(source)
   }
 }
 

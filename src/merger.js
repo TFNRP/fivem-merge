@@ -42,7 +42,7 @@ async function merge(paths, options) {
       // eslint-disable-next-line no-await-in-loop
       tempPath = nodePath.join(options.tempPath, `fvm-temp-${await md5Dir(path)}`);
       info(`Creating temp directory at ${tempPath}`);
-      if (fs.existsSync(tempPath)) fs.rmSync(tempPath, { recursive: true });
+      if (fs.existsSync(tempPath)) Util.removeRecursive(tempPath);
       fs.mkdirSync(tempPath);
       fs.mkdirSync(nodePath.join(tempPath, 'data'));
       fs.mkdirSync(nodePath.join(tempPath, 'stream'));
@@ -110,10 +110,7 @@ async function merge(paths, options) {
     // Copy assets
     for (const ent of fs.readdirSync(nodePath.join(path, 'stream'), { withFileTypes: true })) {
       if (ent.isDirectory()) {
-        fs.cpSync(nodePath.join(path, 'stream', ent.name), nodePath.join(tempPath, 'stream', ent.name), {
-          force: false,
-          recursive: true,
-        });
+        Util.copyRecursive(nodePath.join(path, 'stream', ent.name), nodePath.join(tempPath, 'stream', ent.name));
       } else if (ent.isFile()) {
         const name = ent.name.replace(/(_hi)?.yft$/, '').replace(/.ytd$/, '');
         if (!ent.name.endsWith('.yft') && !ent.name.endsWith('.ytd')) continue;
@@ -126,7 +123,9 @@ async function merge(paths, options) {
 
   // Move assets
   // eslint-disable-next-line no-empty-function
-  mv(tempPath, options.outputPath, () => {});
+  mv(tempPath, options.outputPath, error => {
+    if (error) throw error
+  });
 }
 
 module.exports = merge;
