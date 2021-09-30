@@ -14,4 +14,5 @@ exports.DataFileNames = {
   CARCOLS_FILE: 'carcols.meta',
   VEHICLE_VARIATION_FILE: 'carvariations.meta',
   VEHICLE_LAYOUTS_FILE: 'vehiclelayouts.meta',
+  CONTENT_UNLOCKING_META_FILE: 'caraddoncontentunlocks.meta',
 };
