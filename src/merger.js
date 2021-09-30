@@ -124,7 +124,7 @@ async function merge(paths, options) {
   // Move assets
   // eslint-disable-next-line no-empty-function
   mv(tempPath, options.outputPath, error => {
-    if (error) throw error
+    if (error) throw error;
   });
 }
 

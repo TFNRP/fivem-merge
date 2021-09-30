@@ -190,7 +190,7 @@ class Util extends null {
         fs.unlinkSync(nodePath.join(source, ent.name));
       }
     }
-    fs.rmdirSync(source)
+    fs.rmdirSync(source);
   }
 }
 
