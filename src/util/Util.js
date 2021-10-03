@@ -3,6 +3,7 @@
 const fs = require('fs');
 const nodePath = require('path');
 const xml = require('fast-xml-parser');
+const { isEqual } = require('lodash');
 const lua = require('luaparse');
 const xmlFormatter = require('xml-formatter');
 const Manifest = require('./Manifest');
@@ -125,14 +126,18 @@ class Util extends null {
     const meta = Object.assign({}, meta0);
 
     for (const name in meta1) {
-      if (name === 'Item') {
-        if ([undefined, null].includes(meta[name])) meta[name] = meta1[name];
-        else if (Array.isArray(meta[name])) meta[name] = [...meta[name], ...(Array.isArray(meta1[name]) ? meta1[name] : [meta1[name]])];
-      } else if (typeof meta1[name] === 'object' && meta1[name] !== null) {
+      if (typeof meta1[name] === 'object' && meta1[name] !== null && name !== 'Item') {
         meta[name] = Util.mergeMeta(meta[name], meta1[name]);
       } else if (meta1[name] !== '') {
-        if (![undefined, null].includes(meta[name]) && !Array.isArray(meta[name])) meta[name] = [meta[name]];
-        if (!meta[name].includes(meta1[name])) meta[name] = (meta[name] ?? []).push(meta1[name]);
+        if ([undefined, null].includes(meta[name])) {
+          meta[name] = meta1[name];
+        } else {
+          const fixedMeta1Array = Array.isArray(meta1[name]) ? meta1[name] : [meta1[name]];
+          if (!Array.isArray(meta[name])) meta[name] = [meta[name]];
+          for (const fixedMeta1 of fixedMeta1Array) {
+            if (!meta[name].some(v => isEqual(v, fixedMeta1))) meta[name].push(fixedMeta1);
+          }
+        }
       }
     }
 
