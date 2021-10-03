@@ -119,7 +119,7 @@ async function merge(paths, options) {
       if (ent.isDirectory()) {
         Util.copyRecursive(nodePath.join(path, 'stream', ent.name), nodePath.join(tempPath, 'stream', ent.name));
       } else if (ent.isFile()) {
-        const name = ent.name.replace(/(_hi)?.yft$/, '').replace(/.ytd$/, '');
+        const name = ent.name.replace(/(_hi)?.yft$/, '').replace(/(\+hi)?.ytd$/, '');
         if (!ent.name.endsWith('.yft') && !ent.name.endsWith('.ytd')) continue;
         const dir = nodePath.join(tempPath, 'stream', name);
         if (!fs.existsSync(dir)) fs.mkdirSync(dir);
