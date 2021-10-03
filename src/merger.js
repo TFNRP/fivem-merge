@@ -8,8 +8,25 @@ const Constants = require('./util/Constants');
 const Manifest = require('./util/Manifest');
 const Util = require('./util/Util');
 
+/**
+ * Options for vMerge
+ * @typedef {Object} VMergeOptions
+ * @property {string} outputPath The location to move the merged resource into
+ * @property {string} [tempPath] A preferred temp path. Uses `os.tmpdir()` by default
+ * @property {boolean} [verbose=false] Additional info logging
+ * @property {boolean} [lintOutput=true] Whether output XML should be linted for human readability
+ * @property {(string|string[])} [paths]
+ */
+
+/**
+ * Merges FiveM vehicle resources
+ * @param {(string|string[])} paths The relative paths to the resources to merge
+ * @param {VMergeOptions} options Options to use with vMerge
+ * @returns {Promise<boolean>}
+ */
 async function merge(paths, options) {
   if (!Array.isArray(paths) && typeof options === 'object' && options !== null) {
+    // @ts-ignore
     options = paths;
     paths = options.paths;
   }

@@ -4,6 +4,7 @@
   "description": "An API to merge your FiveM vehicle resources",
   "main": "./src/index.js",
   "module": "./src/index.mjs",
+  "types": "./typings/index.d.ts",
   "files": [
     "src",
     "cli"
@@ -19,10 +20,13 @@
     "vmerge": "./cli/index.js"
   },
   "scripts": {
+    "test": "npm run lint && npm run lint:typings",
+    "test:typescript": "tsc",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "prepublishOnly": "npm run test && gen-esm-wrapper ./src/index.js ./src/index.mjs",
-    "test": "exit 0"
+    "lint:typings": "tslint typings/index.d.ts",
+    "prettier": "prettier --write src/**/*.js typings/**/*.ts",
+    "prepublishOnly": "npm run test && gen-esm-wrapper ./src/index.js ./src/index.mjs"
   },
   "repository": {
     "type": "git",
@@ -53,12 +57,15 @@
     "xml-formatter": "^2.4.1"
   },
   "devDependencies": {
+    "dtslint": "^4.1.6",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-prettier": "^4.0.0",
     "gen-esm-wrapper": "^1.1.3",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.4.3"
   },
   "engines": {
     "node": ">=14.0.0"
