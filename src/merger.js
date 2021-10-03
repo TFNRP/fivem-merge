@@ -29,24 +29,10 @@ async function merge(paths, options) {
   else info = () => {}; // eslint-disable-line no-empty-function
 
   let tempPath;
-  for (let path of paths) {
-    path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
+  for (let i = 0; i < paths.length; i++) {
+    const path = nodePath.isAbsolute(paths[i]) ? paths[i] : nodePath.join(process.cwd(), paths[i]);
     info(`Tasking '${path}'`);
     if (!fs.existsSync(path)) throw new Error(`ENOENT: the path you provided does not exist, '${path}'`);
-    if (!fs.existsSync(nodePath.join(path, 'stream'))) {
-      console.warn(`The resource '${nodePath.basename(path)}' doesn't have any streamed assets. Continuing...`);
-      continue;
-    }
-
-    if (!tempPath) {
-      // eslint-disable-next-line no-await-in-loop
-      tempPath = nodePath.join(options.tempPath, `fvm-temp-${await md5Dir(path)}`);
-      info(`Creating temp directory at ${tempPath}`);
-      if (fs.existsSync(tempPath)) Util.removeRecursive(tempPath);
-      fs.mkdirSync(tempPath);
-      fs.mkdirSync(nodePath.join(tempPath, 'data'));
-      fs.mkdirSync(nodePath.join(tempPath, 'stream'));
-    }
 
     let manifestPath;
     if (fs.existsSync((manifestPath = nodePath.join(path, 'fxmanifest.lua')))) {
@@ -62,8 +48,33 @@ async function merge(paths, options) {
       // stop using FXv1 anyway
       info(`Parsing FXv1 manifest.`);
     } else {
-      throw new Error(`ENOENT: no manifest could be found in '${path}'`);
+      const dirs = [];
+      for (const ent of fs.readdirSync(path, { withFileTypes: true })) {
+        if (ent.isDirectory()) dirs.push(nodePath.join(path, ent.name));
+      }
+      if (dirs.length > 0) {
+        return merge([...dirs, ...paths.slice(0, i), ... paths.slice(i, -1)], Object.assign({}, options))
+      } else {
+        console.warn(`Directory './${nodePath.relative(process.cwd(), path)}' contains no resources. Continuing...`)
+        continue;
+      }
     }
+
+    if (!tempPath) {
+      // eslint-disable-next-line no-await-in-loop
+      tempPath = nodePath.join(options.tempPath, `fvm-temp-${await md5Dir(path)}`);
+      info(`Creating temp directory at ${tempPath}`);
+      if (fs.existsSync(tempPath)) Util.removeRecursive(tempPath);
+      fs.mkdirSync(tempPath);
+      fs.mkdirSync(nodePath.join(tempPath, 'data'));
+      fs.mkdirSync(nodePath.join(tempPath, 'stream'));
+    }
+
+    if (!fs.existsSync(nodePath.join(path, 'stream'))) {
+      console.warn(`The resource '${nodePath.basename(path)}' doesn't have any streamed assets. Continuing...`);
+      continue;
+    }
+
     // From here, we will be assuming they are using Cerulean due to lack of changes in api we use
     const manifest = new Manifest(Util.parseManifest(fs.readFileSync(manifestPath, { encoding: 'utf8' })));
     if (manifest.client_script || manifest.server_script) {
