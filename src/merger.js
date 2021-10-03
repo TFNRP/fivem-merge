@@ -53,9 +53,9 @@ async function merge(paths, options) {
         if (ent.isDirectory()) dirs.push(nodePath.join(path, ent.name));
       }
       if (dirs.length > 0) {
-        return merge([...dirs, ...paths.slice(0, i), ... paths.slice(i, -1)], Object.assign({}, options))
+        return merge([...dirs, ...paths.slice(0, i), ...paths.slice(i, -1)], Object.assign({}, options));
       } else {
-        console.warn(`Directory './${nodePath.relative(process.cwd(), path)}' contains no resources. Continuing...`)
+        console.warn(`Directory './${nodePath.relative(process.cwd(), path)}' contains no resources. Continuing...`);
         continue;
       }
     }
@@ -144,6 +144,8 @@ async function merge(paths, options) {
   mv(tempPath, options.outputPath, error => {
     if (error) throw error;
   });
+
+  return true;
 }
 
 module.exports = merge;
