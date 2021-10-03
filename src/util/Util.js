@@ -126,8 +126,8 @@ class Util extends null {
 
     for (const name in meta1) {
       if (name === 'Item') {
-        if (![undefined, null].includes(meta[name]) && !Array.isArray(meta[name])) meta[name] = [meta[name]];
-        meta.Item = [...(meta.Item ?? []), meta1.Item];
+        if ([undefined, null].includes(meta[name])) meta[name] = meta1[name];
+        else if (Array.isArray(meta[name])) meta[name] = [...meta[name], ...(Array.isArray(meta1[name]) ? meta1[name] : [meta1[name]])];
       } else if (typeof meta1[name] === 'object' && meta1[name] !== null) {
         meta[name] = Util.mergeMeta(meta[name], meta1[name]);
       } else if (meta1[name] !== '') {
