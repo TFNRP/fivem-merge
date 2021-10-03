@@ -43,7 +43,7 @@ function hmBool(name) {
   return false;
 }
 const noLint = hmBool('no-lint') ?? hmBool('l') ?? false;
-const verb = hmBool('verbose') ?? hmBool('v') ?? false;
+const verb = hmBool('verbose') ?? hmBool('V') ?? false;
 const output = parsed.output ?? parsed.o;
 
 if (!output) {
