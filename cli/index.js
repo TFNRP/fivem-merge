@@ -2,12 +2,12 @@
 
 'use strict';
 
-const mri = require('mri');
-const chalk = require('chalk');
-const merge = require('../src');
 const fs = require('fs');
+const chalk = require('chalk');
+const mri = require('mri');
+const merge = require('../src');
 
-const parsed = mri(process.argv.slice(2))
+const parsed = mri(process.argv.slice(2));
 
 if ((parsed.version ?? parsed.v) || parsed._[0] === 'version') {
   console.log(`fivem-merge v${require('../package.json').version}`);
@@ -17,7 +17,11 @@ if ((parsed.version ?? parsed.v) || parsed._[0] === 'version') {
 
 if ((parsed.help ?? parsed.h) || parsed._[0] === 'help' || Object.keys(parsed).length === 1) {
   console.log(`  Usage:`);
-  console.log(`    ${chalk.yellow('vmerge')} <...paths> -o <path>  Merge two or more resources and output them at ${chalk.whiteBright('path')}`);
+  console.log(
+    `    ${chalk.yellow(
+      'vmerge',
+    )} <...paths> -o <path>  Merge two or more resources and output them at ${chalk.whiteBright('path')}`,
+  );
   console.log(`    ${chalk.yellow('vmerge help')}                  This.`);
   console.log(`    ${chalk.yellow('vmerge version')}               The version of this package.`);
   console.log();
@@ -72,4 +76,4 @@ merge(paths, {
   verbose: verb,
   outputPath: output,
   lintOutput: !noLint,
-})
+});
