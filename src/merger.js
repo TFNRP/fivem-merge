@@ -25,6 +25,7 @@ const Util = require('./util/Util');
  * @returns {Promise<boolean>}
  */
 async function merge(paths, options) {
+  if (typeof paths === 'string') paths = [paths];
   if (!Array.isArray(paths) && typeof options === 'object' && options !== null) {
     // @ts-ignore
     options = paths;
