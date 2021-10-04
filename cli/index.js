@@ -40,7 +40,7 @@ function hmBool(name) {
     if (typeof parsed[name] === 'string') paths.push(parsed[name]);
     return true;
   }
-  return false;
+  return undefined;
 }
 const noLint = hmBool('no-lint') ?? hmBool('l') ?? false;
 const verb = hmBool('verbose') ?? hmBool('V') ?? false;
