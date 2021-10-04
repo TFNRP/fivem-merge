@@ -22,10 +22,10 @@
   "scripts": {
     "test": "npm run lint && npm run lint:typings",
     "test:typescript": "tsc",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
+    "lint": "eslint src cli",
+    "lint:fix": "eslint src cli --fix",
     "lint:typings": "tslint typings/index.d.ts",
-    "prettier": "prettier --write src/**/*.js typings/**/*.ts",
+    "prettier": "prettier --write src/**/*.js typings/**/*.ts cli/**/*.js",
     "prepublishOnly": "npm run test && gen-esm-wrapper ./src/index.js ./src/index.mjs"
   },
   "repository": {
