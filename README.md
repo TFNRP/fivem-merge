@@ -10,6 +10,8 @@
 
 - [About](#about)
 - [Documentation](#documentation)
+  - [CLI](#cli)
+  - [API](#api)
 
 ## About
 
@@ -17,27 +19,56 @@ Fivem API for vehicle resource packing.
 
 ## Documentation
 
+### CLI
+
+```sh
+$ vmerge --help
+```
+
+### API
+
 ```js
 const merge = require('fivem-merge');
 /**
- * an array of vehicle resources to merge together
- * @type {string[]}
+ * The relative paths to the resources to merge
+ * @type {(string|string[])}
  */
-const resourcesToMerge
-/** @type {Object} */
+const paths = './'
+/**
+ * Options for vMerge
+ * @type {Object}
+ */
 const options = {
   /**
-   * whether output XML files should be linted for human readability
+   * The location to move the merged resource into
+   * @type {string}
+   */
+  outputPath: './vehicles',
+  /**
+   * A preferred temp path. Uses `os.tmpdir()` by default
+   * @type {string}
+   * @default undefined
+   */
+  tempPath: null,
+  /**
+   * Additional info logging
+   * @type {boolean}
+   * @default false
+   */
+  verbose: true,
+  /**
+   * Whether output XML should be linted for human readability
    * @type {Boolean}
    * @default true
    */
   lintOutput: true,
-  /**
-   * the output directory of the merge resource
-   * @type {string}
-   */
-  outputPath: './vehicles',
 }
 
-merge(resourcesToMerge, options)
+/**
+ * Merges FiveM vehicle resources
+ * @param {(string|string[])} paths The relative paths to the resources to merge
+ * @param {VMergeOptions} options Options to use with vMerge
+ * @returns {Promise<boolean>}
+ */
+merge(paths, options)
 ```
