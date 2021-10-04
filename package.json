@@ -20,7 +20,7 @@
     "vmerge": "./cli/index.js"
   },
   "scripts": {
-    "test": "npm run lint && npm run lint:typings",
+    "test": "npm run lint && npm run lint:typings && node test",
     "test:typescript": "tsc",
     "lint": "eslint src cli",
     "lint:fix": "eslint src cli --fix",
