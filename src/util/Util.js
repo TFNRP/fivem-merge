@@ -5,7 +5,6 @@ const nodePath = require('path');
 const xml = require('fast-xml-parser');
 const { isEqual } = require('lodash');
 const lua = require('luaparse');
-const xmlFormatter = require('xml-formatter');
 const Manifest = require('./Manifest');
 
 class Util extends null {
@@ -111,15 +110,11 @@ class Util extends null {
   static unparseMeta(object, { lint = true } = {}) {
     let str = new xml.j2xParser({
       ignoreAttributes: false,
+      format: lint,
       supressEmptyNode: false,
+      indentBy: '  ',
     }).parse(object);
-    if (lint) {
-      str = `\n${xmlFormatter(str, {
-        indentation: '  ',
-        whiteSpaceAtEndOfSelfclosingTag: true,
-      })}`;
-    }
-    return `<?xml version="1.0" encoding="UTF-8"?>${str}`;
+    return `<?xml version="1.0" encoding="UTF-8"?>${lint ? '\n' : ''}${str}`;
   }
 
   static mergeMeta(meta0, meta1) {
