@@ -111,8 +111,14 @@ async function merge(paths, options) {
         );
         continue;
       }
-      const dataPath = nodePath.join(path, manifest.data_file[dataName]);
-      if (!fs.existsSync(dataPath)) continue;
+      let dataPath = nodePath.join(path, manifest.data_file[dataName]);
+      if (!fs.existsSync(dataPath)) {
+        if (!fs.existsSync((dataPath = nodePath.join(path, 'data', manifest.data_file[dataName])))) {
+          info(`Data path doesn't exist: ${dataPath}`);
+          continue;
+        }
+        info(`This resource is using an incorrect path to '${dataName}'. It has been corrected`);
+      }
       const dataTempPath = nodePath.join(tempPath, 'data', Constants.DataFileNames[dataName]);
       dataFiles.push(dataName);
 
