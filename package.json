@@ -1,6 +1,6 @@
 {
   "name": "fivem-merge",
-  "version": "0.1.6",
+  "version": "0.2.6",
   "description": "An API to merge your FiveM vehicle resources",
   "main": "./src/index.js",
   "module": "./src/index.mjs",
@@ -67,6 +67,7 @@
     "typescript": "^4.4.3"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }
